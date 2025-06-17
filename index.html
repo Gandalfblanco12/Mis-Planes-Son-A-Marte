@@ -25,9 +25,9 @@
       width: 100%;
       text-align: center;
       color: white;
-      text-shadow: 0 0 15px #ff69b4, 0 0 20px #ff69b4;
-      font-size: 2.4em;
-      font-weight: bold;
+      text-shadow: 0 0 10px #ff69b4, 0 0 12px #ff69b4;
+      font-size: 1.4em;
+      font-weight: normal;
       opacity: 0;
       z-index: 2;
     }
@@ -41,7 +41,7 @@
       bottom: 10%;
       padding: 0 5vw;
       line-height: 1.4;
-      font-size: 2.2em;
+      font-size: 1.2em;
       animation: escribir2 8s ease-out forwards;
       animation-delay: 7s;
     }
@@ -154,8 +154,8 @@
       const centerY = canvas.height / 2 + osc;
       const size = 300;
       ctx.globalAlpha = 1;
-      ctx.drawImage(imgLuna, centerX - size - 10, centerY - size / 2, size, size);
-      ctx.drawImage(imgMarte, centerX + 10, centerY - size / 2, size, size);
+      ctx.drawImage(imgLuna, centerX - size - 08, centerY - size / 2, size, size);
+      ctx.drawImage(imgMarte, centerX + 08, centerY - size / 2, size, size);
     }
 
     function dibujarOrquideas() {
