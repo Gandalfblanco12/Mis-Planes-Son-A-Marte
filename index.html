@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mis Planes Son Amarte</title>
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      background: radial-gradient(ellipse at center, #000 0%, #111 100%);
+      font-family: 'Georgia', cursive;
+    }
+
+    canvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      z-index: 0;
+    }
+
+    .texto, .texto2 {
+      position: absolute;
+      width: 100%;
+      text-align: center;
+      color: white;
+      text-shadow: 0 0 15px #ff69b4, 0 0 20px #ff69b4;
+      font-size: 2.4em;
+      font-weight: bold;
+      opacity: 0;
+      z-index: 2;
+    }
+
+    .texto {
+      top: 12%;
+      animation: escribir1 6s ease-out forwards;
+    }
+
+    .texto2 {
+      bottom: 10%;
+      padding: 0 5vw;
+      line-height: 1.4;
+      font-size: 2.2em;
+      animation: escribir2 8s ease-out forwards;
+      animation-delay: 7s;
+    }
+
+    @keyframes escribir1 {
+      0% { opacity: 0; transform: translateY(-20px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes escribir2 {
+      0% { opacity: 0; transform: translateY(20px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+  <canvas id="fondo"></canvas>
+  <div class="texto">MIS PLANES SON AMARTE Y LOS TUYOS SON A LA LUNA</div>
+  <div class="texto2">NO CREÍ SENTIR ESTO POR TI, NO PUEDO SACARTE DE MI MENTE...<br>ENAMORARME DE TI ES LO MÁS RARO E INESPERADO QUE ME PASÓ.</div>
+
+  <audio id="musica" autoplay loop>
+    <source src="mis_planes.mp3" type="audio/mpeg">
+    Tu navegador no soporta el elemento de audio.
+  </audio>
+
+  <script>
+    const canvas = document.getElementById('fondo');
+    const ctx = canvas.getContext('2d');
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    const imgLuna = new Image();
+    const imgMarte = new Image();
+    const imgFlor1 = new Image();
+    const imgFlor2 = new Image();
+    imgLuna.src = 'luna.png';
+    imgMarte.src = 'marte.png';
+    imgFlor1.src = 'FLOR1.png';
+    imgFlor2.src = 'FLOR2.png';
+
+    const colores = ['#ff0000', '#800080', '#ff69b4', '#ff8c00'];
+    const corazones = [];
+    for (let i = 0; i < 400; i++) {
+      corazones.push({
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height,
+        size: 22 + Math.random() * 10,
+        speed: 0.6 + Math.random() * 1.5,
+        drift: (Math.random() - 0.5) * 0.5,
+        color: colores[Math.floor(Math.random() * colores.length)]
+      });
+    }
+
+    const orquideas = [];
+    for (let i = 0; i < 10; i++) {
+      const flor = i % 2 === 0 ? imgFlor1 : imgFlor2;
+      orquideas.push({
+        img: flor,
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height,
+        size: 100 + Math.random() * 120,
+        angle: Math.random() * 2 * Math.PI,
+        speed: 0.002 + Math.random() * 0.003
+      });
+    }
+
+    const estrellas = [];
+    for (let i = 0; i < 200; i++) {
+      estrellas.push({
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height,
+        radius: Math.random() * 1.5 + 0.3,
+        alpha: Math.random(),
+        speed: Math.random() * 0.01 + 0.002
+      });
+    }
+
+    function dibujarEstrellas() {
+      estrellas.forEach(estrella => {
+        estrella.alpha += estrella.speed;
+        if (estrella.alpha >= 1 || estrella.alpha <= 0) estrella.speed *= -1;
+        ctx.globalAlpha = estrella.alpha;
+        ctx.fillStyle = "#ffffff";
+        ctx.beginPath();
+        ctx.arc(estrella.x, estrella.y, estrella.radius, 0, 2 * Math.PI);
+        ctx.fill();
+      });
+    }
+
+    let frame = 0;
+
+    function dibujarCorazones() {
+      ctx.font = "28px Georgia";
+      corazones.forEach(corazon => {
+        ctx.globalAlpha = 0.8;
+        ctx.fillStyle = corazon.color;
+        ctx.fillText("💜", corazon.x, corazon.y);
+        corazon.y += corazon.speed;
+        corazon.x += corazon.drift;
+        if (corazon.y > canvas.height || corazon.x < 0 || corazon.x > canvas.width) {
+          corazon.y = -30;
+          corazon.x = Math.random() * canvas.width;
+        }
+      });
+    }
+
+    function dibujarImagenes() {
+      const osc = Math.sin(frame * 0.02) * 10;
+      const centerX = canvas.width / 2;
+      const centerY = canvas.height / 2 + osc;
+      const size = 300;
+      ctx.globalAlpha = 1;
+      ctx.drawImage(imgLuna, centerX - size - 30, centerY - size / 2, size, size);
+      ctx.drawImage(imgMarte, centerX + 30, centerY - size / 2, size, size);
+    }
+
+    function dibujarOrquideas() {
+      orquideas.forEach(o => {
+        const oscX = Math.cos(frame * o.speed + o.angle) * 20;
+        const oscY = Math.sin(frame * o.speed + o.angle) * 20;
+        ctx.globalAlpha = 0.65;
+        ctx.drawImage(o.img, o.x + oscX, o.y + oscY, o.size, o.size);
+      });
+    }
+
+    function dibujar() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.fillStyle = '#000000';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      dibujarEstrellas();
+      dibujarCorazones();
+      dibujarOrquideas();
+      dibujarImagenes();
+      frame++;
+      requestAnimationFrame(dibujar);
+    }
+
+    let cargadas = 0;
+    function iniciarSiListas() {
+      cargadas++;
+      if (cargadas === 4) dibujar();
+    }
+
+    [imgLuna, imgMarte, imgFlor1, imgFlor2].forEach(img => img.onload = iniciarSiListas);
+
+    window.addEventListener('click', () => {
+      const musica = document.getElementById('musica');
+      if (musica.paused) musica.play();
+    });
+  </script>
+</body>
+</html>
